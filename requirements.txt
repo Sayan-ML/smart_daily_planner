@@ -1,0 +1,11 @@
+fastapi
+uvicorn[standard]
+httpx
+jinja2
+python-multipart
+feedparser
+yfinance
+google-auth
+google-auth-oauthlib
+google-api-python-client
+python-dotenv
