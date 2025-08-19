@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+{% block body %}
+<ul class="nav nav-tabs" id="tabs">
+  <li class="nav-item"><a class="nav-link active" data-bs-toggle="tab" href="#weather">Weather</a></li>
+  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#stocks">Stocks</a></li>
+  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#crypto">Crypto</a></li>
+  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#trip">Trip</a></li>
+  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#movies">Movies</a></li>
+  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#sports">Sports</a></li>
+  <li class="nav-item"><a class="nav-link" data-bs-toggle="tab" href="#news">News</a></li>
+  <li class="nav-item"><a class="nav-link" href="/auth/google">Connect Google</a></li>
+</ul>
+
+<div class="tab-content mt-3">
+  <div id="weather" class="tab-pane fade show active">
+    <div class="row">
+      <div class="col-md-4">
+        <input id="w_lat" class="form-control" placeholder="lat (e.g. 28.61)">
+        <input id="w_lon" class="form-control mt-2" placeholder="lon (e.g. 77.23)">
+        <button onclick="getWeather()" class="btn btn-primary mt-2">Get Weather</button>
+      </div>
+      <div class="col-md-8"><pre id="weather_out"></pre></div>
+    </div>
+  </div>
+
+  <!-- Add similar UI blocks for other tabs (stocks/crypto/trip/movies/sports/news) -->
+  <div id="news" class="tab-pane fade">
+    <input id="news_q" class="form-control" placeholder="search news">
+    <button class="btn btn-primary mt-2" onclick="getNews()">Get News</button>
+    <ul id="news_out"></ul>
+  </div>
+</div>
+
+<script>
+async function getWeather(){
+  const lat = document.getElementById("w_lat").value;
+  const lon = document.getElementById("w_lon").value;
+  const res = await fetch(`/api/weather?lat=${lat}&lon=${lon}`);
+  document.getElementById("weather_out").textContent = JSON.stringify(await res.json(), null, 2);
+}
+async function getNews(){
+  const q = document.getElementById("news_q").value || "today";
+  const r = await fetch(`/api/news?query=${encodeURIComponent(q)}`);
+  const js = await r.json();
+  const out = document.getElementById("news_out");
+  out.innerHTML = "";
+  js.items.forEach(i => {
+    const li = document.createElement("li");
+    li.innerHTML = `<a href="${i.link}" target="_blank">${i.title}</a> <small>${i.published||''}</small>`;
+    out.appendChild(li);
+  })
+}
+</script>
+{% endblock %}
